@@ -18,11 +18,11 @@ import com.ScottDemo.androidtools.R;
 import com.ScottDemo.androidtools.TimeActivity;
 
 public class TimeScene extends BaseScene {
-    
+
     public interface onViewClosedListener {
         public void onViewClosed();
     }
-    
+
     private onViewClosedListener mOnViewClosedListener;
 
     private LayoutParams params;
@@ -66,7 +66,7 @@ public class TimeScene extends BaseScene {
         // TODO Auto-generated method stub
         super.onExit();
     }
-    
+
     public View findViewById(int id) {
         return contentView.findViewById(id);
     }
@@ -79,8 +79,8 @@ public class TimeScene extends BaseScene {
 
         String timeStr = (new Date(System.currentTimeMillis())).toGMTString();
         tv_showTime.setText(timeStr);
-        
-        Button btn_closeWindow = (Button)findViewById(R.id.btn_closeWindow);
+
+        Button btn_closeWindow = (Button) findViewById(R.id.btn_closeWindow);
         btn_closeWindow.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -91,11 +91,11 @@ public class TimeScene extends BaseScene {
             }
         });
     }
-    
+
     private void showView() {
         getWindowManager().addView(contentView, params);
     }
-    
+
     private void removeView() {
         getWindowManager().removeViewImmediate(contentView);
     }

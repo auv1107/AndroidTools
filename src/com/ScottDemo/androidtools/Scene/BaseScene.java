@@ -21,8 +21,9 @@ public class BaseScene extends AbstractScene {
 
     public boolean onEnterPrepare() {
         log("onEnterPrepare");
-        IntentFilter backPressed = new IntentFilter(android.content.Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
-       // getContext().registerReceiver(mBackPressedReceiver, backPressed);
+        IntentFilter backPressed = new IntentFilter(
+                android.content.Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
+        // getContext().registerReceiver(mBackPressedReceiver, backPressed);
         return true;
     }
 
@@ -32,7 +33,7 @@ public class BaseScene extends AbstractScene {
 
     public boolean onExitDone() {
         log("onExitDone");
-       // getContext().unregisterReceiver(mBackPressedReceiver);
+        // getContext().unregisterReceiver(mBackPressedReceiver);
         return true;
     }
 
@@ -52,20 +53,20 @@ public class BaseScene extends AbstractScene {
         onExit();
         onExitDone();
     }
-    
+
     public void onBackPressed() {
         log("onBackPressed");
         end();
     }
-    
+
     private BroadcastReceiver mBackPressedReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            log ("onReceive");
+            log("onReceive");
             onBackPressed();
         }
     };
-    
+
     protected void log(String log) {
         if (DBG) {
             Log.d(TAG, log);

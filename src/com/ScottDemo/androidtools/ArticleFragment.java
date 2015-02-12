@@ -1,5 +1,5 @@
-package com.ScottDemo.androidtools;
 
+package com.ScottDemo.androidtools;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -24,8 +24,8 @@ public class ArticleFragment extends Fragment {
             Log.d(TAG, "null");
         return inflater.inflate(R.layout.fragment_article, container, false);
     }
-    
+
     public void updateArticleView(int position) {
-        ((TextView)this.getView().findViewById(R.id.tv_article)).setText(String.valueOf(position));
+        ((TextView) this.getView().findViewById(R.id.tv_article)).setText(String.valueOf(position));
     }
 }

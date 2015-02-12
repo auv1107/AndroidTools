@@ -13,30 +13,33 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
-public class FragmentActivity extends ActionBarActivity implements HeadFragment.OnHeadlineSelectedListener {
+public class FragmentActivity extends ActionBarActivity implements
+        HeadFragment.OnHeadlineSelectedListener {
 
     public static long startTime = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fragment);
         startTime = SystemClock.elapsedRealtime();
-        
+
         Log.d("FragmentActivity", "onCreate");
         if (savedInstanceState == null) {
             HeadFragment hf = new HeadFragment();
             hf.setArguments(getIntent().getExtras());
-            
-            ArrayAdapter aa =  new ArrayAdapter(this, android.R.layout.simple_list_item_1,android.R.id.text1, getData());
+
+            ArrayAdapter aa = new ArrayAdapter(this, android.R.layout.simple_list_item_1,
+                    android.R.id.text1, getData());
             hf.setListAdapter(aa);
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.content1, hf)
                     .add(R.id.content2, new ArticleFragment(), "articleFragment")
                     .commit();
         }
-        
+
     }
-    
+
     private String[] getData() {
         return new String[] {
                 "Apple",
@@ -50,9 +53,9 @@ public class FragmentActivity extends ActionBarActivity implements HeadFragment.
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        
+
         // Inflate the menu; this adds items to the action bar if it is present.
-        //getMenuInflater().inflate(R.menu, menu);
+        // getMenuInflater().inflate(R.menu, menu);
         return true;
     }
 
@@ -62,9 +65,9 @@ public class FragmentActivity extends ActionBarActivity implements HeadFragment.
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-       // if (id == R.id.action_settings) {
-       //     return true;
-       // }
+        // if (id == R.id.action_settings) {
+        // return true;
+        // }
         return super.onOptionsItemSelected(item);
     }
 
@@ -79,7 +82,7 @@ public class FragmentActivity extends ActionBarActivity implements HeadFragment.
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_, container, false);
+            View rootView = inflater.inflate(R.layout.fragment_article, container, false);
             return rootView;
         }
     }
@@ -87,7 +90,8 @@ public class FragmentActivity extends ActionBarActivity implements HeadFragment.
     @Override
     public void onArticleSelected(int position) {
         // TODO Auto-generated method stub
-        ArticleFragment af = (ArticleFragment)getSupportFragmentManager().findFragmentById(R.id.content2);
+        ArticleFragment af = (ArticleFragment) getSupportFragmentManager().findFragmentById(
+                R.id.content2);
         if (af != null) {
             af.updateArticleView(position);
         } else {
@@ -95,8 +99,9 @@ public class FragmentActivity extends ActionBarActivity implements HeadFragment.
             Bundle args = new Bundle();
             args.putInt(ArticleFragment.ARG_POSITION, position);
             newAf.setArguments(args);
-            
-            getSupportFragmentManager().beginTransaction().replace(R.id.content2, newAf).addToBackStack(null).commit();
+
+            getSupportFragmentManager().beginTransaction().replace(R.id.content2, newAf)
+                    .addToBackStack(null).commit();
         }
     }
 }
