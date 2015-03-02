@@ -3,6 +3,7 @@ package com.ScottDemo.androidtools;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -154,6 +155,24 @@ public class MainActivity extends Activity {
                 }
             });
             main_container.addView(btnContact);
+
+            Button btnDialog = new Button(this);
+            btnDialog.setText("对话框");
+            btnDialog.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    new AlertDialog.Builder(MainActivity.this)
+                            .setTitle("多选框")
+                            .setMultiChoiceItems(new String[] {
+                                    "选项1", "选项2", "选项3", "选项4"
+                            }, null, null)
+                            .setPositiveButton("确定", null)
+                            .setNegativeButton("取消", null)
+                            .show();
+                }
+            });
+            main_container.addView(btnDialog);
+
         }
 
         DisplayMetrics dm = new DisplayMetrics();

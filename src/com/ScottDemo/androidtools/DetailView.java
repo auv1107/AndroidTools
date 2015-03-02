@@ -7,10 +7,14 @@ import android.animation.TimeInterpolator;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.CommonDataKinds.Email;
 import android.provider.ContactsContract.CommonDataKinds.Phone;
+import android.provider.ContactsContract.Contacts.Photo;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewStub;
@@ -19,6 +23,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 public class DetailView {
+    private static final String TAG = DetailView.class.getSimpleName();
+    private final boolean DEBUG = true;
+
     private Activity mActivity;
     private View mRoot;
     private int mStubId;
@@ -53,23 +60,11 @@ public class DetailView {
         if (data.length > 0) {
             mDetailEmail.setText(data[0]);
         }
-    }
-
-    public void setContent(Cursor c) {
-        int index = c.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME);
-        String id = c.getString(c.getColumnIndex(ContactsContract.Contacts._ID));
-        if (c.moveToFirst()) {
-            String name = c.getString(index);
-            mDetailName.setText(name);
-
-            String[] data = getData(Phone.CONTENT_URI, Phone.NUMBER, id, "contact_id");
-            if (data.length > 0) {
-                mDetailPhone.setText(data[0]);
-            }
-            data = getData(Email.CONTENT_URI, Email.ADDRESS, id, "contact_id");
-            if (data.length > 0) {
-                mDetailEmail.setText(data[0]);
-            }
+        Bitmap avator = getPhoto(id);
+        if (avator != null) {
+            mDetailAvatar.setImageBitmap(avator);
+        } else {
+            mDetailAvatar.setImageResource(R.drawable.ic_launcher);
         }
     }
 
@@ -86,10 +81,39 @@ public class DetailView {
 
         StringBuilder sb = new StringBuilder();
         while (c.moveToNext()) {
-            sb.append(c.getString(c.getColumnIndex(targetColumn))).append(" ");
+            sb.append(c.getString(c.getColumnIndex(targetColumn)).replaceAll("\\s*", "")).append(
+                    " ");
         }
         c.close();
         return sb.toString().split(" ");
+    }
+
+    public Bitmap getPhoto(String contact_id) {
+        byte[] icon = null;
+        Uri uri = Uri.withAppendedPath(ContactsContract.Contacts.CONTENT_URI, contact_id);
+        uri = Uri.withAppendedPath(uri, ContactsContract.Contacts.Photo.CONTENT_DIRECTORY);
+        Cursor c = null;
+        try {
+            c = mActivity.getContentResolver().query(uri, new String[] {
+                    Photo.PHOTO
+            }, null, null, null);
+            if (c.moveToFirst()) {
+                icon = c.getBlob(0);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            c.close();
+        }
+
+        if (icon != null) {
+            try {
+                return BitmapFactory.decodeByteArray(icon, 0, icon.length);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
     }
 
     public Cursor getDetail(String id) {
@@ -255,6 +279,12 @@ public class DetailView {
             return mContentView.findViewById(id);
         } else {
             return null;
+        }
+    }
+
+    public void log(String msg) {
+        if (DEBUG) {
+            Log.d(TAG, this.toString() + " - " + msg);
         }
     }
 }

@@ -96,7 +96,7 @@ public class PickerFragment extends ListFragment {
 
     private void log(String msg) {
         // TODO Auto-generated method stub
-        Log.d(TAG, this + " - " + msg);
+        Log.d(TAG, this.toString() + " - " + msg);
     }
 
     private Cursor getContacts()
