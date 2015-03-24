@@ -4,13 +4,19 @@ package com.ScottDemo.androidtools;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.Toast;
 import android.os.Build;
 
 public class LifecircleActivity extends ActionBarActivity {
@@ -26,6 +32,49 @@ public class LifecircleActivity extends ActionBarActivity {
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.container, new PlaceholderFragment())
                     .commit();
+        }
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        Handler h = new Handler();
+        h.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                new AlertDialog.Builder(LifecircleActivity.this)
+                        .setMessage("Dialog Displaying")
+                        .setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // TODO Auto-generated method stub
+                                dialog.dismiss();
+                            }
+                        }).show().getWindow()
+                        .addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                ;
+                // Intent i = new Intent(LifecircleActivity.this,
+                // MainActivity.class);
+                // startActivity(i);
+            }
+        }, 13000);
+        child c = new child();
+        c.toast();
+    }
+
+    public class base {
+        public int n = 0;
+
+        public void cal() {
+            n = 1;
+        }
+
+        public void toast() {
+            cal();
+            Toast.makeText(LifecircleActivity.this, "n=" + n, Toast.LENGTH_LONG).show();
+        }
+    }
+
+    public class child extends base {
+        @Override
+        public void cal() {
+            n = 2;
         }
     }
 

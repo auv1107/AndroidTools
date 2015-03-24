@@ -45,6 +45,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.ScottDemo.androidtools.MainActivity" />
         </activity>
+        <activity
+            android:name="com.ScottDemo.androidtools.ListviewActivity"
+            android:label="@string/title_activity_listview"
+            android:parentActivityName="com.ScottDemo.androidtools.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.ScottDemo.androidtools.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

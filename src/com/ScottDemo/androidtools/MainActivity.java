@@ -4,6 +4,7 @@ package com.ScottDemo.androidtools;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -12,9 +13,15 @@ import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.Transformation;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ScottDemo.androidtools.util.SystemUiHider;
 
@@ -56,6 +63,7 @@ public class MainActivity extends Activity {
     private LinearLayout main_container;
 
     private TextView mContentView;
+    boolean no = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,32 +87,25 @@ public class MainActivity extends Activity {
                     @Override
                     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
                     public void onVisibilityChange(boolean visible) {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-                            // If the ViewPropertyAnimator API is available
-                            // (Honeycomb MR2 and later), use it to animate the
-                            // in-layout UI controls at the bottom of the
-                            // screen.
-                            if (mControlsHeight == 0) {
-                                mControlsHeight = controlsView.getHeight();
-                            }
-                            if (mShortAnimTime == 0) {
-                                mShortAnimTime = getResources().getInteger(
-                                        android.R.integer.config_shortAnimTime);
-                            }
-                            controlsView.animate()
-                                    .translationY(visible ? 0 : mControlsHeight)
-                                    .setDuration(mShortAnimTime);
-                        } else {
-                            // If the ViewPropertyAnimator APIs aren't
-                            // available, simply show or hide the in-layout UI
-                            // controls.
-                            controlsView.setVisibility(visible ? View.VISIBLE : View.GONE);
-                        }
-
-                        if (visible && AUTO_HIDE) {
-                            // Schedule a hide().
-                            delayedHide(AUTO_HIDE_DELAY_MILLIS);
-                        }
+                        /*
+                         * if (Build.VERSION.SDK_INT >=
+                         * Build.VERSION_CODES.HONEYCOMB_MR2) { // If the
+                         * ViewPropertyAnimator API is available // (Honeycomb
+                         * MR2 and later), use it to animate the // in-layout UI
+                         * controls at the bottom of the // screen. if
+                         * (mControlsHeight == 0) { mControlsHeight =
+                         * controlsView.getHeight(); } if (mShortAnimTime == 0)
+                         * { mShortAnimTime = getResources().getInteger(
+                         * android.R.integer.config_shortAnimTime); }
+                         * controlsView.animate() .translationY(visible ? 0 :
+                         * mControlsHeight) .setDuration(mShortAnimTime); } else
+                         * { // If the ViewPropertyAnimator APIs aren't //
+                         * available, simply show or hide the in-layout UI //
+                         * controls. controlsView.setVisibility(visible ?
+                         * View.VISIBLE : View.GONE); } if (visible &&
+                         * AUTO_HIDE) { // Schedule a hide(). //
+                         * delayedHide(AUTO_HIDE_DELAY_MILLIS); }
+                         */
                     }
                 });
 
@@ -173,6 +174,99 @@ public class MainActivity extends Activity {
             });
             main_container.addView(btnDialog);
 
+            Button btnAnimation = new Button(this);
+            btnAnimation.setText("动画");
+            btnAnimation.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    final ImageView iv = (ImageView) findViewById(R.id.imageAnimation);
+                    final int heightMeasure = main_container.getMeasuredHeight();
+                    final int widthMeasure = iv.getMeasuredWidth();
+                    final Animation animation1 = new Animation() {
+                        @Override
+                        protected void applyTransformation(float interpolatedTime, Transformation t) {
+                            super.applyTransformation(interpolatedTime, t);
+                            int tmp = heightMeasure - (int) (heightMeasure * interpolatedTime);
+                            main_container.getLayoutParams().height = tmp;
+                            main_container.requestLayout();
+                        }
+                    };
+                    Animation animation = new Animation() {
+                        @Override
+                        protected void applyTransformation(float interpolatedTime, Transformation t) {
+                            super.applyTransformation(interpolatedTime, t);
+                            if (interpolatedTime == 1) {
+                                iv.getLayoutParams().height = 1;
+                                iv.requestLayout();
+                                iv.setVisibility(View.GONE);
+                            } else if (interpolatedTime > 0.5 && no == false) {
+                                no = true;
+                                animation1.setDuration(2000);
+                                animation1.setInterpolator(new DecelerateInterpolator(1f));
+                                main_container.startAnimation(animation1);
+                            }
+                            else {
+                                iv.getLayoutParams().width = widthMeasure
+                                        - (int) (widthMeasure * interpolatedTime);
+                                iv.requestLayout();
+                            }
+                        }
+
+                        @Override
+                        public boolean willChangeBounds() {
+                            // TODO Auto-generated method stub
+                            return true;
+                        }
+                    };
+                    animation.setDuration(2000);
+                    animation.setInterpolator(new DecelerateInterpolator(1f));
+                    iv.startAnimation(animation);
+                }
+            });
+            main_container.addView(btnAnimation);
+
+            Button btnDelayDialog = new Button(this);
+            btnDelayDialog.setText("DelayDialog");
+            btnDelayDialog.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+                            | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
+                            | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
+                            | WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON);
+                    Handler h = new Handler();
+                    h.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            new AlertDialog.Builder(MainActivity.this)
+                                    .setMessage("Dialog Displaying")
+                                    .setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            // TODO Auto-generated method stub
+                                            dialog.dismiss();
+                                        }
+                                    }).show();
+                        }
+                    }, 30000);
+                }
+            });
+            main_container.addView(btnDelayDialog);
+
+            Button btnListview = new Button(this);
+            btnListview.setText("ListView");
+            btnListview.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // TODO Auto-generated method stub
+                    Intent intent = new Intent(MainActivity.this, ListviewActivity.class);
+                    MainActivity.this.startActivity(intent);
+                }
+            });
+            main_container.addView(btnListview);
+
+            String a = getWindow().getAttributes().toString();
+            Toast.makeText(this, "" + a, Toast.LENGTH_LONG).show();
         }
 
         DisplayMetrics dm = new DisplayMetrics();
